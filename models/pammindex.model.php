@@ -49,7 +49,7 @@ class PammindexModel extends Model {
         $arValues['history'] = $arHistory;
         //var_dump($arHistory);
 
-        var_dump($this->create($arValues));       
+        return $this->create($arValues);       
        
     }
 
