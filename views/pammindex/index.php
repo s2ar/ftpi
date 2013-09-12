@@ -1,12 +1,5 @@
-<article>
-    
-
-<div id="chartdiv" style="width: 100%; height: 362px;"></div>
-<script src="/public/js/charts.js"></script>
-
-
-<div class="bs-docs-section">
-
+<article> 
+  <div class="bs-docs-section">
   <div class="row">
     <div class="col-lg-12">
       <div class="page-header">

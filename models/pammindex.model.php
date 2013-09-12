@@ -78,7 +78,29 @@ class PammindexModel extends Model {
      */
     function getByName($name) {
         return $this->collection->findOne(array('name'=>$name));
+    }      
+
+    /**
+     * Посчитать сложный процент 
+     * @param array $arHistory
+     * @return array 
+     */
+    function calcCompInterest($arHistory) {
+        if(!is_array($arHistory)) return false;
+        $arNewHistory = array();
+        $compPercent = 1;
+        foreach ($arHistory as $rec) {
+            $compPercent =  round($compPercent*(1+($rec['percent']/100)),4);
+            //echo  $compPercent."<br />";
+            $arNewHistory[]=array('date'=>date('m/d/Y', $rec['mkdate']->sec), 'percent'=>$compPercent);
+        }
+        return $arNewHistory;
     }       
+
+
+
+
+
 
     /**
      * Удалить поле по id

@@ -44,6 +44,8 @@ class Pammindex extends Controller{
         if(!is_string($name)) return false;
 
         $this->view->arIndex = $this->model->getByName($name);
+
+        $this->view->historyModif = $this->model->calcCompInterest($this->view->arIndex['history']);
         $this->view->render('pammindex/view');
     }
 

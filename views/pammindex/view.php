@@ -1,8 +1,18 @@
 <article>
+	<script>
+	var chartData = [
 <?
-var_dump($this->arIndex['history']);
+//var_dump($this->arIndex['history']);
+
+foreach ($this->historyModif as $val) {
+	echo "{ year: new Date('".$val['date']."'),  value: ".$val['percent']."},";
+	//var_dump(date('m/d/Y', $val['mkdate']->sec));
+}
 
 ?>
+];
+	</script>
+
 	<div class="row">
     	<div class="col-lg-12">
 			<div class="page-header">
