@@ -2,7 +2,7 @@
 class PammindexModel extends Model {
     //public $totalFields;
 	private $collection;
-
+    public $totalIndexes = 5;
 
     function __construct() {
         parent::__construct();
@@ -12,7 +12,7 @@ class PammindexModel extends Model {
 
 
     function upload($url) {
-         // http://fx-trend.com/pamm/index/Prize
+        // http://fx-trend.com/pamm/index/Prize
         $html = file_get_html($url); // создание объекта по ссылке
 
         // Массив значений
@@ -53,21 +53,18 @@ class PammindexModel extends Model {
        
     }
 
-
-
-
     /**
-     * Получить список полей 
+     * Получить список индексов
      * @param array $arFilter - подготовленый массив для выборки
      * @param int $page - номер страницы
      */
-    function get_list($arFilter, $pageMode = true, $page=1)  {
+    function getList($arFilter, $pageMode = true, $page=1)  {
         if(!is_array($arFilter) || !is_numeric($page)) return false;       
               
         $cursor = $this->collection->find($arFilter);
         if ($pageMode) {
             $skip = ($page - 1) * Config::perPage; // сдвиг выборки           
-            $this->totalFields = $cursor->count();   
+            $this->totalIndexes = $cursor->count();   
             $cursor->sort(array('order'=>1))->skip($skip)->limit(Config::perPage);    
         }    
         return  parent::cursor_to_array($cursor);         
@@ -75,12 +72,12 @@ class PammindexModel extends Model {
 
 
     /**
-     * Получить поле по id
-     * @param int $id
+     * Получить индекс по имени
+     * @param str $name
      * @return array
      */
-    function get_by_id($id) {
-        return $this->collection->findOne(array('_id'=>new MongoId($id)));
+    function getByName($name) {
+        return $this->collection->findOne(array('name'=>$name));
     }       
 
     /**

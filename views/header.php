@@ -6,8 +6,9 @@
     <link rel="stylesheet" href="/public/css/general.css" type="text/css">
     <link href="/public/css/bootstrap.min.css" rel="stylesheet" media="screen">
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="/public/js/bootstrap.min.js"></script>
+    <script src="/public/js/amcharts.js"></script>
  </head>
  <body style="padding-top: 100px;">
 
@@ -16,18 +17,18 @@
     <div class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <a href="../" class="navbar-brand">Главная</a>
+          <a href="/" class="navbar-brand">Главная</a>
         </div>
         <div class="navbar-collapse collapse" id="navbar-main">
           <ul class="nav navbar-nav">
             <li class="dropdown">
-              <a href="../pammindex/" >ПАММ Индексы</a>
+              <a href="/pammindex/" >ПАММ Индексы</a>
             </li>
             <li>
-              <a href="../blog/">Blog</a>
+              <a href="/blog/">Blog</a>
             </li> 
             <li>
-              <a href="../help/">Help</a>
+              <a href="/help/">Help</a>
             </li>
   
           </ul>

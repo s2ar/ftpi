@@ -6,7 +6,9 @@ class Pammindex extends Controller{
         parent::__construct();   
     }
     
-    function index(){       
+    function index(){   
+        $arFilter =array();
+        $this->view->arIndexes = $this->model->getList($arFilter, false) ;    
         $this->view->msg = $this->rus2translit('ПАММ Индексы');
         
         $this->view->render('pammindex/index');
@@ -38,6 +40,12 @@ class Pammindex extends Controller{
         $this->view->render('pammindex/form');  
     }
 
+    function view($name) {
+        if(!is_string($name)) return false;
+
+        $this->view->arIndex = $this->model->getByName($name);
+        $this->view->render('pammindex/view');
+    }
 
     
 
