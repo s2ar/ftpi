@@ -27,6 +27,7 @@ class PammindexModel extends Model {
         $dateStartExp2 = explode('.', $dateStartExpl[0]);
         $arValues['date_start'] = mktime( 0, 0, 0, intval($dateStartExp2[1]), intval($dateStartExp2[2]), intval($dateStartExp2[0]));
         $arValues['date_start'] = new MongoDate($arValues['date_start']);
+        $arValues['url'] = $url;
 
         $tr = $html->find('table.my_accounts_table tr');
         $arHistory = array();
@@ -48,10 +49,53 @@ class PammindexModel extends Model {
         }
         $arValues['history'] = $arHistory;
         //var_dump($arHistory);
-
-        return $this->create($arValues);       
+        $arValues = $this->calcOtherParams($arValues);
+        return $arValues;       
        
     }
+
+    /**
+     * Подсчет других параметров индекса
+     * Входящий массив - результат upload($url)
+     */
+    function calcOtherParams($arValues){
+        if(!is_array($arValues) || !is_array($arValues['history'])) return false; 
+
+        //Найдем среднее и среднеквадратичное отклонение
+        /*
+            Нужно вычислить отклонения всех измерений от среднего (знаки не важны), потом их возвести все в квадрат, 
+            сложить, поделить на число измерений и извлечь квадратный корень.
+        */
+
+        // Сформируем массив значений
+
+        $arItems = array();
+        $sum = 0;
+        foreach ($arValues['history'] as $val) {
+            $arItems[]=$val['percent'];
+            $sum += $val['percent'];
+        }
+
+        $mean = round($sum/count($arItems),2);
+
+        $arItemsDiffMean = array();
+        $sumDiffMean = 0;
+        foreach ($arItems as $val) {
+            $sumDiffMean +=pow(abs($mean - $val), 2);           
+        }
+        $stDeviat = round(sqrt($sumDiffMean/count($arItems)),2);
+
+        $arValues['mean'] = $mean;
+        $arValues['st_deviat'] = $stDeviat;
+
+        //var_dump($arItems);
+        //var_dump($sum);
+        //var_dump($mean);
+        //var_dump($stDeviat);
+        return  $arValues;
+    }
+
+
 
     /**
      * Получить список индексов

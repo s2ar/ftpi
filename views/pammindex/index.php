@@ -10,17 +10,22 @@
         <table class="table table-striped table-bordered table-hover">
             <thead>
               <tr>
-                <th>Имя</th>
-                <th>Column heading</th>
-                <th>Column heading</th>
+                <th>имя</th>
+                <th>мат.ожидание</th>
+                <th>сред.квадрат. отклонение</th>
+                <th>мат/сред * 100</th>
+                <th>действия</th>             
               </tr>
             </thead>
 <?
 foreach ($this->arIndexes as $index) {
   ?><tr>
     <td><a href="/pammindex/view/<?=$index['name'];?>"><?=$index['name']?></a></td>
-    <td>Column content</td>
-    <td>Column content</td>
+    <td><?=$index['mean']?></td>
+    <td><?=$index['st_deviat']?></td>
+    <td><?=round($index['mean']/$index['st_deviat'],2)*100?></td>
+    <td><a href="/pammindex/update/<?=$index['name'];?>">обновить</a></td>
+
   </tr><?
 }
 ?> 

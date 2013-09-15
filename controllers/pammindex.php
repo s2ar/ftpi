@@ -14,7 +14,7 @@ class Pammindex extends Controller{
         $this->view->render('pammindex/index');
     }    
 
-    function add(){       
+    function add(){
         // Если переменная "add" содержит 1 - значит форма отправлена с данными, 
         // нужно создать запись, иначе выводим форму
 
@@ -27,15 +27,14 @@ class Pammindex extends Controller{
                 exit; 
             }  
             // TODO возвратить id индекса, чтобы выбрать его имя
-            if($this->model->upload($url)){
+            $arUpload = $this->model->upload($url);
+            if($this->model->create($arUpload)){
             //if(false){
                 $this->add_flash_message("Памм индекс <strong>".$_POST['name']."</strong> добавлен", 'success');
-                $this->redirect_to("/pammindex");
+                $this->redirect_to("/pammindex/");
             }else{
                 $this->add_flash_message("Ошибка. Памм индекс не добавлен", 'danger', false);
-            }
-
-                
+            }                
         }        
         $this->view->render('pammindex/form');  
     }
@@ -49,7 +48,28 @@ class Pammindex extends Controller{
         $this->view->render('pammindex/view');
     }
 
-    
+    /**
+     * Обновление индекса
+     */
+    function update($name) {
+        if(!is_string($name)) return false;
+        $arIndex = $this->model->getByName($name);
+        if(isset($arIndex['url'])&& !empty($arIndex['url'])){
+            $arUpload = $this->model->upload($arIndex['url']);
+
+            // простая проверка на соответствие имени
+            if($arUpload['name'] ==$name){
+                $this->model->delete($arIndex['_id']);
+                $this->model->create($arUpload);
+                $this->add_flash_message("Памм индекс <strong>".$name."</strong> обновлен", 'success');
+            }else{
+                $this->add_flash_message("Памм индекс <strong>".$name."</strong> не обновлен", 'danger');
+            }
+        }else{
+            $this->add_flash_message("Не найден URL Памм индекса <strong>".$name."</strong>", 'danger');
+        }
+        $this->redirect_to('/pammindex/');
+    }
 
 
 
