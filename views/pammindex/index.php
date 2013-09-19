@@ -14,6 +14,7 @@
                 <th>мат.ожидание</th>
                 <th>сред.квадрат. отклонение</th>
                 <th>мат/сред * 100</th>
+                <th>дата обновления</th>
                 <th>действия</th>             
               </tr>
             </thead>
@@ -24,6 +25,7 @@ foreach ($this->arIndexes as $index) {
     <td><?=$index['mean']?></td>
     <td><?=$index['st_deviat']?></td>
     <td><?=round($index['mean']/$index['st_deviat'],2)*100?></td>
+    <td><?=date('d.m.Y', $index['date_create']->sec)?></td>
     <td><a href="/pammindex/update/<?=$index['name'];?>">обновить</a></td>
 
   </tr><?
