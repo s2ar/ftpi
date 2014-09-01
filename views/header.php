@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
  <head>
-    <title>FX-trend pamm index analyzer</title>
+    <title>FX-trend pamm analyzer</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="/public/css/general.css" type="text/css">
     <link href="/public/css/bootstrap.min.css" rel="stylesheet" media="screen">
@@ -22,7 +22,7 @@
         <div class="navbar-collapse collapse" id="navbar-main">
           <ul class="nav navbar-nav">
             <li class="dropdown">
-              <a href="/pammindex/" >ПАММ Индексы</a>
+              <a href="/pamm/" >ПАММ Счета</a>
             </li>
             <li>
               <a href="/blog/">Blog</a>

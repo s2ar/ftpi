@@ -15,7 +15,7 @@ class DatabaseMongo {
             return self::$instance;            
   
         try {
-            $connection = new Mongo();
+            $connection = new MongoClient();
             self::$instance = $connection->selectDB(Config::mongo_db_name);
         } catch(MongoConnectionException $e) {
             die("Failed to connect to mongo database ".$e->getMessage());
