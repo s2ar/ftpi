@@ -19,9 +19,55 @@ class PammModel extends Model {
         $arValues = array();
 
         $headerBlock = $html->find('div#mb_center table tr', 0); 
-        // Имя памм индекса
+        // Номер памм счета
+        $arValues['number'] = $headerBlock->find('td table tr',0)->find('td',1)->innertext;
+        // Дата создания памм счета
+        //         $dateStart = $headerBlock->find('td table tr',1)->find('td',1)->innertext;
+        //         $dateStartExpl = explode(' ', $dateStart);
+        //         $dateStartExp2 = explode('.', $dateStartExpl[0]);
+        //         $arValues['date_start'] = mktime( 0, 0, 0, intval($dateStartExp2[1]), intval($dateStartExp2[2]), intval($dateStartExp2[0]));
+        //         $arValues['date_start'] = new MongoDate($arValues['date_start']);
+        
+        // Заголовок        
+        $arValues['name'] = str_replace('PAMM account details ','',$headerBlock->find('h2',0)->innertext);
+        $arValues['url'] = $url;
+
+        $tr = $html->find('table.my_accounts_table',1)->find('tr');
+        $arHistory = array();
+        $i = -1;
+        foreach ($tr as $el) {
+            $i++;
+            if($el->find('td div') || $i==0) continue;
+            $date = $el->children(0)->innertext;
+            $percent = $el->children(2)->innertext;  
+
+            $dateExpl = explode("-", $date);
+            $dateExpl1 = explode('.', trim($dateExpl[1]));
+
+            $mkRow = mktime( 0, 0, 0, $dateExpl1[1], $dateExpl1[0], $dateExpl1[2]);
+
+            $row = array('mkdate'=>new MongoDate($mkRow), 'percent'=>floatval($percent)); 
+            $arHistory[]=$row;
+
+        }
+        $arValues['history'] = $arHistory;
+        //var_dump($arHistory);
+        $arValues = $this->calcOtherParams($arValues);
+        return $arValues;    
+        
+        
+        /*
+         *
+                 // http://fx-trend.com/pamm/index/Prize
+        $html = file_get_html($url); // создание объекта по ссылке
+
+        // Массив значений
+        $arValues = array();
+
+        $headerBlock = $html->find('div#mb_center table tr', 0); 
+        // Имя памм счета
         $arValues['name'] = $headerBlock->find('td table tr',0)->find('td',1)->innertext;
-        // Дата создания памм индекса
+        // Дата создания памм счета
         $dateStart = $headerBlock->find('td table tr',1)->find('td',1)->innertext;
         $dateStartExpl = explode(' ', $dateStart);
         $dateStartExp2 = explode('.', $dateStartExpl[0]);
@@ -50,7 +96,9 @@ class PammModel extends Model {
         $arValues['history'] = $arHistory;
         //var_dump($arHistory);
         $arValues = $this->calcOtherParams($arValues);
-        return $arValues;       
+        return $arValues;     
+         * 
+         */
        
     }
 
