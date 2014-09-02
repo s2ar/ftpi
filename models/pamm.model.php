@@ -17,10 +17,22 @@ class PammModel extends Model {
 
         // Массив значений
         $arValues = array();
+        
+        
+        // Таблица внизу
+        $footerBlockTr = $html->find('div#mb_center table', 4)->find('tr'); 
+        
+        foreach ($footerBlockTr as $el) {
+            if($el->find('td',0)->innertext == 'Remuneration:&nbsp;'){
+                $percent = $el->find('td',1)->innertext;
+                $arValues['remuneration'] = 1 - intval($percent)/100;
+            }
+            //Remuneration:&nbsp
+        }         
 
         $headerBlock = $html->find('div#mb_center table tr', 0); 
         // Номер памм счета
-        $arValues['number'] = $headerBlock->find('td table tr',0)->find('td',1)->innertext;
+        $arValues['number'] = intval($headerBlock->find('td table tr',0)->find('td',1)->innertext);
         // Дата создания памм счета
         //         $dateStart = $headerBlock->find('td table tr',1)->find('td',1)->innertext;
         //         $dateStartExpl = explode(' ', $dateStart);
@@ -47,11 +59,18 @@ class PammModel extends Model {
             $mkRow = mktime( 0, 0, 0, $dateExpl1[1], $dateExpl1[0], $dateExpl1[2]);
 
             $row = array('mkdate'=>new MongoDate($mkRow), 'percent'=>floatval($percent)); 
+           
+                        // Минимальное значение
+            if(!isset($min)) $min = $row['percent'];
+            $min = ($min < $row['percent'])? $min : $row['percent'];            
             $arHistory[]=$row;
 
+            	
         }
+        $arValues['min'] = $min;
         $arValues['history'] = $arHistory;
-        //var_dump($arHistory);
+        $arValues['history_slice'] = (count($arHistory)>52)? array_slice($arHistory, -52) : $arHistory;
+        //var_dump($arHistory);        
         $arValues = $this->calcOtherParams($arValues);
         return $arValues;    
         
@@ -107,7 +126,7 @@ class PammModel extends Model {
      * Входящий массив - результат upload($url)
      */
     function calcOtherParams($arValues){
-        if(!is_array($arValues) || !is_array($arValues['history'])) return false; 
+        if(!is_array($arValues) || !is_array($arValues['history_slice'])) return false; 
 
         //Найдем среднее и среднеквадратичное отклонение
         /*
@@ -119,9 +138,12 @@ class PammModel extends Model {
 
         $arItems = array();
         $sum = 0;
-        foreach ($arValues['history'] as $val) {
+       
+        foreach ($arValues['history_slice'] as $val) {
             $arItems[]=$val['percent'];
             $sum += $val['percent'];
+            
+
         }
 
         $mean = round($sum/count($arItems),2);
@@ -132,9 +154,17 @@ class PammModel extends Model {
             $sumDiffMean +=pow(abs($mean - $val), 2);           
         }
         $stDeviat = round(sqrt($sumDiffMean/count($arItems)),2);
-
+         
+        $arHistory = $arValues['history'];
+        $arHistorySlice=$arValues['history_slice'];
+        unset($arValues['history']);
+        unset($arValues['history_slice']);
+        
         $arValues['mean'] = $mean;
         $arValues['st_deviat'] = $stDeviat;
+        $arValues['history'] = $arHistory;
+        $arValues['history_slice'] = $arHistorySlice;
+        
 
         //var_dump($arItems);
         //var_dump($sum);
@@ -146,31 +176,40 @@ class PammModel extends Model {
 
 
     /**
-     * Получить список индексов
+     * Получить список счетов
      * @param array $arFilter - подготовленый массив для выборки
      * @param int $page - номер страницы
      */
     function getList($arFilter, $pageMode = true, $page=1)  {
         if(!is_array($arFilter) || !is_numeric($page)) return false;       
               
-        $cursor = $this->collection->find($arFilter);
+        $cursor = $this->collection->find($arFilter)->sort(array('number'=>1));
         if ($pageMode) {
             $skip = ($page - 1) * Config::perPage; // сдвиг выборки           
             $this->totalIndexes = $cursor->count();   
-            $cursor->sort(array('order'=>1))->skip($skip)->limit(Config::perPage);    
+            $cursor = $cursor->sort(array('number'=>1))->skip($skip)->limit(Config::perPage);    
         }    
         return  parent::cursor_to_array($cursor);         
     } 
 
 
     /**
-     * Получить индекс по имени
+     * Получить счет по имени
      * @param str $name
      * @return array
      */
     function getByName($name) {
         return $this->collection->findOne(array('name'=>$name));
     }      
+    
+    /**
+     * Получить счет по номеру
+     * @param str $number
+     * @return array
+     */
+    function getByNumber($number) {
+        return $this->collection->findOne(array('number'=>$number));
+    }  
 
     /**
      * Посчитать сложный процент 

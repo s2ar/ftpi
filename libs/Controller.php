@@ -119,7 +119,8 @@ class Controller {
      *  @param str $url
      */
     public function redirect_to($url) {
-         header('location: '.$url);
+    	header('location: '.$url);
+        exit;
     }
 
 }
