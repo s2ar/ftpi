@@ -208,7 +208,7 @@ class PammModel extends Model {
      * @return array
      */
     function getByNumber($number) {
-        return $this->collection->findOne(array('number'=>$number));
+        return $this->collection->findOne(array('number'=>intval($number)));
     }  
 
     /**

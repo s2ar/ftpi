@@ -64,6 +64,7 @@ class Pamm extends Controller{
     function update($number) {
         if(!is_string($number)) return false;
         $arIndex = $this->model->getByNumber($number);
+     
         if(isset($arIndex['url'])&& !empty($arIndex['url'])){
             $arUpload = $this->model->upload($arIndex['url']);
 
